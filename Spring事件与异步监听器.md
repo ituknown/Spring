@@ -11,11 +11,11 @@ public interface Event {
 
 对于监听器而言，它监听的是 `Event` 这个类型的事件。如果这个事件接口有多个实现类我们是不是都可以监听的到？
 
-所以，监听器监听的是一类事件，它与事件之间的关系是一对多的关系，能够理解这点在实际应用中就简单的多了。
+所以，监听器监听的是一类事件，它与事件之间的关系是一对多的关系，能够理解这点在实际中就会有很多应用。
 
 # 入门示例
 
-知道 Spring 事件与监听器之间的关系之后就来定义一组事件监听器。Spring 的事件与监听器都是配套出现，只定义一类是没有任何意义的，现在就来看下怎么定义。
+知道 Spring 事件与监听器之间的关系之后我们就来尝试定义一组事件监听器。Spring 的事件与监听器都是配套出现，只定义一类是没有任何意义的，现在就来看下怎么定义。
 
 ## 事件定义
 
@@ -67,7 +67,7 @@ public abstract class ApplicationEvent extends EventObject {
 }
 ```
 
-而且，对于构造方法中的事件源参数 `source` 似乎也不太好理解。所以，在实际使用中我们还是以 `ApplicationContextEvent` 抽行类为主：
+而且，对于构造方法中的事件源参数 `source` 似乎也不太好理解（如果不知道 `java.util.EventObject`  的话）。所以，在实际使用中我们还是以 `ApplicationContextEvent` 抽行类为主：
 
 ```java
 public abstract class ApplicationContextEvent extends ApplicationEvent {
@@ -82,7 +82,7 @@ public abstract class ApplicationContextEvent extends ApplicationEvent {
 }
 ```
 
-这个抽象类与 `ApplicationEvent` 在功能上没有任何区别。要说区别的话可能就是在构造方法中指定了事件源 `source` 对象类型为接口 `ApplicationContext`，这样就限定了事件的了来源。作为 Spring 框架的搬运工对这个接口并不陌生，因为它是 Spring 工厂的高级容器接口。使用该类就可以显示的告诉所有程序对象事件源来自于 Spring 容器，全权由 Spring 管理。所以，在实际使用中还是应该以 `ApplicationContextEvent` 类为主。
+这个抽象类与 `ApplicationEvent` 在功能上没有任何区别。要说区别的话可能就是在构造方法中限定了事件源 `source` 对象类型为 `ApplicationContext`。作为 Spring 框架的搬运工大家对这个接口并不陌生，因为它是 Spring 工厂的高级容器接口。使用该类就可以显示的告诉所有程序对象事件源来自于 Spring 容器，全权由 Spring 管理。所以，在实际使用中还是应该以 `ApplicationContextEvent` 类为主。
 
 现在就基于该类定义一个事件，在直播网站中如果某个用户进入直播间通常都会有一个标语：欢迎xx进入直播间，一起走波小礼物~
 
@@ -110,11 +110,11 @@ public class OnlineApplicationEvent extends ApplicationContextEvent {
 
 | **注意**                                                     |
 | :----------------------------------------------------------- |
-| 事件类是一个对象，每发布一个事件就需要创建一个新的对象，所以我们保护应该将事件类注册为 Bean 交给 Spring 容器管理。 |
+| 事件是一个对象，每发布一个事件就需要创建一个新的事件对象，所以我们不应该将事件类注册为 Bean 交给 Spring 容器管理。 |
 
 ## 事件监听器定义
 
-既然 JDK 定义了事件对象肯定就有相应的监听器类，这个监听器是一个接口类：`java.util.EventListener`，其内部没有定义任何方法。所有的一切都有程序员自行扩展：
+既然 JDK 定义了事件对象肯定就有相应的监听器类，这个监听器是一个接口类：`java.util.EventListener`，其内部没有定义任何方法，是个空壳接口类。所有的一切都有程序员自行扩展：
 
 ```java
 public interface EventListener {
@@ -150,7 +150,11 @@ public class OnlineApplicationListener implements ApplicationListener<OnlineAppl
 
 我们定义的上线事件监听类 `OnlineApplicationListener` 实现了 `ApplicationListener` 接口类，因为我们需要监听 `OnlineApplicationEvent` 类型的事件，所以我们将泛型定义为我们需要监听的事件即可。
 
-在重写的方法中我们打印了一句话：线程名 + 上线用户。
+**在重写的方法中我们打印了一句话：线程名 + 上线用户，在之后的示例中要注意下这个线程名，以便更容易理解之后的异步事件监听器的使用。**
+
+| **注意**                                                     |
+| :----------------------------------------------------------- |
+| 由于事件监听器监听的是一组事件，所以我们应该将事件监听器注册为 Bean 交于 Spring 容器管理。 |
 
 现在就来运行一下程序看下效果：
 
@@ -176,9 +180,7 @@ main线程通知事件: 抹茶大大上线了, 欢迎进入直播间~
 -----------------
 ```
 
-| **注意**                                                     |
-| :----------------------------------------------------------- |
-| 由于事件监听器监听的是一组事件，所以我们应该将事件监听器注册为 Bean 交于 Spring 容器管理。 |
+### 事件监听器扩展
 
 定义事件监听器除了上面的方法之外还有其他两种方法：
 
@@ -222,7 +224,7 @@ public class SmartOnlineApplicationListener implements SmartApplicationListener 
 
 似乎也没有什么区别，唯一的区别就是多了 `supportsEventType` 方法。该方法与泛型是等效效果，当该方法的返回值为 true 时才会继续执行 `onApplicationEvent` 监听器方法。所以在实际使用中根据个人喜好选择即可~
 
-除了上面两种使用类的方法实现监听器之外还有一种更简单的基于注解的事件监听器，该注解就是 `@EventListener`：
+还有一种更简单的基于注解的事件监听器，该注解就是 `@EventListener`：
 
 ```java
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
@@ -255,11 +257,11 @@ public class SimpleEventListener {
 }
 ```
 
-emmm.... 似乎简单了不少，需要注意的是，如果监听器方法的参数，这个参数就是需要监听的事件的类型。
+Emmm.... 似乎简单了不少，需要注意的是，如果监听器方法的参数，这个参数就是需要监听的事件的类型。
 
 # 异步事件监听器
 
-上面定义的事件监听器都是非常简单的同步事件监听器，我们试想一下，监听器是否应该影响业务？比如注册了新用户，我们需要短信或者发送邮件通知。而这个通知结果是不应该影响实际业务的，如果本次用户没有收到短信或者邮件只需要用户重新点击再次发送即可。
+上面定义的事件监听器都是非常简单的同步事件监听器（还记得上面打印的线程名称吗）。我们试想一下，事件监听器是否应该影响业务？比如注册了新用户，我们需要发送短信或者发送邮件填写验证码激活。而这个通知结果实际上是不应该影响实际业务的，如果本次用户没有收到短信或者邮件只需要用户重新点击再次发送即可。
 
 而上面的同步事件监听器存在的问题是：如果在监听器中抛出了一个异常就会影响实际的业务流程。
 
@@ -293,11 +295,12 @@ public static void main(String[] args) {
 }
 ```
 
-当运行这段程序时理想情况下是不是应该打印如下结果：
+当运行这段程序时**理想情况下**是不是应该打印如下结果：
 
 ```
 -----------------
 main线程通知事件: 抹茶大大上线了, 欢迎进入直播间~
+Exception in thread "main" java.lang.ArithmeticException: / by zero
 -----------------
 ```
 
@@ -323,7 +326,7 @@ Exception in thread "main" java.lang.ArithmeticException: / by zero
 
 ## 异步监听器原理源码解析
 
-对 Spring 初始化流程有点了解的应该都知道是从 `AbstractApplicationContext#refresh()` 这个方法开始的，在这个方法中有三个与事件发布与监听的方法，如下：
+对 Spring 初始化流程有点了解的应该知道容器初始化是从 `AbstractApplicationContext#refresh()` 这个方法开始的，在这个方法中有三个与事件发布与监听的方法，如下：
 
 ```java
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
@@ -337,7 +340,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
          try {
 
-            // 初始化事件分发器 Bean
+            // 初始化事件分发器 Bean(也叫事件管理器)
             initApplicationEventMulticaster();
 
             // 支持事件监听器, 将Spring容器中的监听器注册到事件分发器容器对象中
@@ -364,8 +367,11 @@ private ApplicationEventMulticaster applicationEventMulticaster;
 public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
 
 protected void initApplicationEventMulticaster() {
+    
+   // 首先获取容器
    ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
+   // 注意这个判断
    if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
       
       this.applicationEventMulticaster =
@@ -373,6 +379,7 @@ protected void initApplicationEventMulticaster() {
 
    } else {
      
+      // 默认初始化的事件管理器
       this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
       beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
    }
@@ -387,7 +394,8 @@ protected void initApplicationEventMulticaster() {
 private ApplicationEventMulticaster applicationEventMulticaster;
 
 protected void registerListeners() {
-    // 注意下面的 getApplicationEventMulticaster() 方法
+    
+   // 注意下面的 getApplicationEventMulticaster() 方法
     
    for (ApplicationListener<?> listener : getApplicationListeners()) {
       getApplicationEventMulticaster().addApplicationListener(listener);
@@ -412,11 +420,11 @@ ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalState
 }
 ```
 
-具体逻辑先不管，但是我们很明显能看出一点的是注册监听器与  `initApplicationEventMulticaster()` 方法中注册的事件分发器有关，因为在 `getApplicationEventMulticaster()` 方法中获取的事件分发器就是在上一步中注册的事件分发器。
+具体逻辑先不管，但是我们很明显能看出一点的就是注册监听器与  `initApplicationEventMulticaster()` 方法中注册的事件分发器有关，因为在 `getApplicationEventMulticaster()` 方法中获取的事件分发器就是在上一步中注册的事件分发器。
 
 而之后的 `finishRefresh()` 方法主要执行的业务就是发布事件，也就是与该类中的 `getApplicationEventMulticaster().multicastEvent(earlyEvent)` 逻辑相同。
 
-而 `getApplicationEventMulticaster()` 获取的对象是不是就是第一步注册的 `SimpleApplicationEventMulticaster` 对象？那么我们就需要关注 `SimpleApplicationEventMulticaster` 类中的 `multicastEvent` 方法：
+而 `getApplicationEventMulticaster()` 获取的对象是不是就是第一步默认注册的 `SimpleApplicationEventMulticaster` 对象？那么我们就需要关注 `SimpleApplicationEventMulticaster` 类中的 `multicastEvent` 方法：
 
 ```java
 public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster {
@@ -459,18 +467,18 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 }
 ```
 
-上面是 `SimpleApplicationEventMulticaster` 简化后的源码，我们真正需要关心的是 `multicastEvent` 方法。来一起读一下该方法中的内容：
+上面是 `SimpleApplicationEventMulticaster` 简化后的源码，我们注意看下 `multicastEvent` 方法。来一起读一下该方法中的内容：
 
 第一步调用 `resolveDefaultEventType` 方法进行解析事件的类型得到  `ResolvableType` 对象（这个不需要关心）。
 
-第二步重点来了，执行 `getTaskExecutor()` 方法获取线程池。想一下，我们没有自定义过事件分发器。而这个事件分发器是 Spring 默认初始化的，调用构造方法初始化之后就直接赋值应用了：
+第二步重点来了，执行 `getTaskExecutor()` 方法获取线程池。想一下，我们没有自定义过事件分发器。而这个事件分发器是 Spring 默认初始化的，在上面的源码中默认注册的事件管理器是直接调用构造方法初始化之后就直接赋值应用了：
 
 ```java
 this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
 beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
 ```
 
-从头到尾都没有去设置这个线程池，所以这个线程池值为 null。在来看下下面的 `Foreach` 循环，是不是循环监听器，之后去判断如果有线程池的话就直接使用线程池调用，如果没有就直接调用。
+从头到尾都没有去设置这个线程池，所以这个线程池值为 null。再来看下下面的 `Foreach` 循环，是不是循环监听器，之后去判断如果有线程池的话就直接使用线程池调用，如果没有就直接调用。
 
 这里的线程池调用是不是就是异步执行？直接调用是不是就是同步执行？至于内部调用的 `invokeListener()` 方法我们一点都不需要关心，无非就是做一些判断之后回调事件监听器的 `onApplicationEvent` 方法。
 
@@ -486,7 +494,7 @@ beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.appl
 private ApplicationEventMulticaster applicationEventMulticaster;
 ```
 
-`ApplicationEventMulticaster` 类是一个接口类 `org.springframework.context.event.ApplicationEventMulticaster`。而我们需要定义一个该类型的事件分发器，之后你会发现 Spring 中只定义了一个实现类 `SimpleApplicationEventMulticaster` 。这样，我们直接使用该类即可（当然你也可以自行扩展）。
+`ApplicationEventMulticaster` 类是一个接口类 `org.springframework.context.event.ApplicationEventMulticaster`。而我们需要定义一个该类型的事件分发器，之后你会发现 Spring 中对于该接口只定义了一个实现类 `SimpleApplicationEventMulticaster` 。这样，我们直接使用该类即可（当然你也可以自行扩展）。
 
 定义一个配置类，在内部注册 `ApplicationEventMulticaster` 类型的 Bean。
 
@@ -560,7 +568,7 @@ public class Config {
 		taskExecutor.setQueueCapacity(999);
 		taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-		// 线程名前缀
+		// 线程名前缀, 注意这个线程名称
 		taskExecutor.setThreadNamePrefix("async-task-thread-");
 		// 一定要初始化线程池
 		taskExecutor.initialize();
@@ -617,3 +625,152 @@ Exception in thread "async-task-thread-1" java.lang.ArithmeticException: / by ze
 两个 `-----------------` 都正常打印了，而且执行监听器的线程名是 `async-task-thread-1` 而不是之前的 `main` 线程。
 
 到此，异步事件监听器就配置完成了。
+
+# 观察者模式
+
+Spring 中的事件监听器就是观察者模式的一种实现，这个在文章开始的时候也说过了。只不过，Spring 中的事件监听器将观察者模式又进进行了一步抽象，再穿插着 Spring 本身的源码来看，显得就特别不易懂。所以，在文章最后再说下观察者模式，以便理解 Spring 的事件监听器的实现原理。
+
+观察者模式的特点是：被观察者持有观察者的引用。另一个特点是两个对象存在依赖关系，这种依赖关系是一堆多的，且当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并被自动更新。
+
+多说无意，直接看下实例代码（这个实例来自于[菜鸟教程](https://www.runoob.com/design-pattern/observer-pattern.html)，因为笔者觉得这个实例很简单易懂所以直接拷贝过来使用，并没有冒犯原作者的意思）。
+
+观察者模式使用三个类 Subject、Observer 和 Client。Subject 对象带有绑定观察者到 Client 对象和从 Client 对象解绑观察者的方法。我们创建 *Subject* 类、*Observer* 抽象类和扩展了抽象类 *Observer* 的实体类。
+
+创建 `Subject.java`
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+ 
+public class Subject {
+   
+   private int state;
+   private List<Observer> observers = new ArrayList<Observer>();
+ 
+   public int getState() {
+      return state;
+   }
+ 
+   public void setState(int state) {
+      this.state = state;
+      notifyAllObservers();
+   }
+ 
+   public void attach(Observer observer){
+      observers.add(observer);      
+   }
+   
+   public void remove(Observer observer){
+      observers.remove(observer);      
+   }
+ 
+   public void notifyAllObservers(){
+      for (Observer observer : observers) {
+         observer.update();
+      }
+   }  
+}
+```
+
+这个类我们就可以理解为是被观察者，这个类有持有观察者的引用（`observers`），且被观察者还能管理观察者（能够增加和删除观察者）。最后，当被观察者状态改变时能够通知所有的观察者（`notifyAllObservers`）。
+
+再来看下观察者 `Observer`
+
+```java
+public abstract class Observer {
+   protected Subject subject;
+   public abstract void update();
+}
+```
+
+观察者通常抖定义为抽象类或接口，因为观察者应该具有多种实现，这也就是多台的应用。看下具体三个实现：
+
+1. 二进制实现类
+
+   ```java
+   public class BinaryObserver extends Observer{
+    
+      public BinaryObserver(Subject subject){
+         this.subject = subject;
+         this.subject.attach(this);
+      }
+    
+      @Override
+      public void update() {
+         System.out.println( "Binary String: " 
+         + Integer.toBinaryString( subject.getState() ) ); 
+      }
+   }
+   ```
+
+2. 十进制实现类
+
+   ```java
+   public class OctalObserver extends Observer{
+    
+      public OctalObserver(Subject subject){
+         this.subject = subject;
+         this.subject.attach(this);
+      }
+    
+      @Override
+      public void update() {
+        System.out.println( "Octal String: " 
+        + Integer.toOctalString( subject.getState() ) ); 
+      }
+   }
+   ```
+
+3. 十六进制实现类
+
+   ```java
+   public class HexaObserver extends Observer{
+    
+      public HexaObserver(Subject subject){
+         this.subject = subject;
+         this.subject.attach(this);
+      }
+    
+      @Override
+      public void update() {
+         System.out.println( "Hex String: " 
+         + Integer.toHexString( subject.getState() ).toUpperCase() ); 
+      }
+   }
+   ```
+
+现在，也应该能够理解观察者模式的特点了。这就有点类似广播的意思，当被观察者的状态改变时就通知该被观察者持有的所有观察者引用。
+
+最后创建测试类：
+
+```java
+public class ObserverPatternDemo {
+   public static void main(String[] args) {
+      Subject subject = new Subject();
+ 
+      new HexaObserver(subject);
+      new OctalObserver(subject);
+      new BinaryObserver(subject);
+ 
+      System.out.println("First state change: 15");   
+      subject.setState(15);
+      System.out.println("Second state change: 10");  
+      subject.setState(10);
+   }
+}
+```
+
+打印结果为：
+
+```
+First state change: 15
+Hex String: F
+Octal String: 17
+Binary String: 1111
+Second state change: 10
+Hex String: A
+Octal String: 12
+Binary String: 1010
+```
+
+这么看来观察者模式是不是就很简单了？这个实例理解之后那对于 Spring 的事件监听器是不是就想撒撒水一样简单了～
