@@ -53,7 +53,7 @@ public class EventObject implements java.io.Serializable {
 
 ```java
 public abstract class ApplicationEvent extends EventObject {
-    
+
 	private final long timestamp;
 
 	public ApplicationEvent(Object source) {
@@ -108,8 +108,8 @@ public class OnlineApplicationEvent extends ApplicationContextEvent {
 
 现在事件类定义好了，我们就需要定义一个该时间对应的监听器了。
 
-| **注意**                                                     |
-| :----------------------------------------------------------- |
+| **注意**                                                                                                           |
+| :----------------------------------------------------------------------------------------------------------------- |
 | 事件是一个对象，每发布一个事件就需要创建一个新的事件对象，所以我们不应该将事件类注册为 Bean 交给 Spring 容器管理。 |
 
 ## 事件监听器定义
@@ -126,7 +126,7 @@ public interface EventListener {
 ```java
 @FunctionalInterface
 public interface ApplicationListener<E extends ApplicationEvent> extends EventListener {
-    
+
 	void onApplicationEvent(E event);
 }
 ```
@@ -152,8 +152,8 @@ public class OnlineApplicationListener implements ApplicationListener<OnlineAppl
 
 **在重写的方法中我们打印了一句话：线程名 + 上线用户，在之后的示例中要注意下这个线程名，以便更容易理解之后的异步事件监听器的使用。**
 
-| **注意**                                                     |
-| :----------------------------------------------------------- |
+| **注意**                                                                                   |
+| :----------------------------------------------------------------------------------------- |
 | 由于事件监听器监听的是一组事件，所以我们应该将事件监听器注册为 Bean 交于 Spring 容器管理。 |
 
 现在就来运行一下程序看下效果：
@@ -194,7 +194,7 @@ public interface SmartApplicationListener extends ApplicationListener<Applicatio
 	default boolean supportsSourceType(@Nullable Class<?> sourceType) {
 		return true;
 	}
-    
+
 	@Override
 	default int getOrder() {
 		return LOWEST_PRECEDENCE;
@@ -237,7 +237,7 @@ public @interface EventListener {
 
 	@AliasFor("value")
 	Class<?>[] classes() default {};
-    
+
 	String condition() default "";
 
 }
@@ -257,7 +257,7 @@ public class SimpleEventListener {
 }
 ```
 
-Emmm.... 似乎简单了不少，需要注意的是，如果监听器方法的参数，这个参数就是需要监听的事件的类型。
+emm.... 似乎简单了不少，需要注意的是，如果监听器方法的参数，这个参数就是需要监听的事件的类型。
 
 # 异步事件监听器
 
@@ -335,7 +335,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
    @Override
    public void refresh() throws BeansException, IllegalStateException {
       synchronized (this.startupShutdownMonitor) {
-        
+
         // ...
 
          try {
@@ -345,7 +345,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
             // 支持事件监听器, 将Spring容器中的监听器注册到事件分发器容器对象中
             registerListeners();
-            
+
             // 容器初始化最后一步: 注册容器生命周期回调 Lifecycle.
             // 事件发布
             finishRefresh();
@@ -356,7 +356,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
          }
       }
    }
-}
+}∏
 ```
 
  `initApplicationEventMulticaster()` 方法主要适用于初始化事件分发器。看下这个方法的源码：
@@ -367,18 +367,18 @@ private ApplicationEventMulticaster applicationEventMulticaster;
 public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
 
 protected void initApplicationEventMulticaster() {
-    
+
    // 首先获取容器
    ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
    // 注意这个判断
    if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
-      
+
       this.applicationEventMulticaster =
             beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
 
    } else {
-     
+
       // 默认初始化的事件管理器
       this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
       beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
@@ -394,9 +394,9 @@ protected void initApplicationEventMulticaster() {
 private ApplicationEventMulticaster applicationEventMulticaster;
 
 protected void registerListeners() {
-    
+
    // 注意下面的 getApplicationEventMulticaster() 方法
-    
+
    for (ApplicationListener<?> listener : getApplicationListeners()) {
       getApplicationEventMulticaster().addApplicationListener(listener);
    }
@@ -498,8 +498,8 @@ private ApplicationEventMulticaster applicationEventMulticaster;
 
 定义一个配置类，在内部注册 `ApplicationEventMulticaster` 类型的 Bean。
 
-| **一定要注意 Bean 的名称**                                   |
-| :----------------------------------------------------------- |
+| **一定要注意 Bean 的名称**                                                                                                                                                                                    |
+| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 在注册事件分发器 `initApplicationEventMulticaster()` 方法中判断容器中是否有名称为 `applicationEventMulticaster` 的 Bean。所以，在自定义事件分发器时定义的 Bean 的名称一定要是 `applicationEventMulticaster`。 |
 
 好了，现在就定义一个配置类声明一个 Bean：
@@ -579,7 +579,7 @@ public class Config {
 	public SimpleApplicationEventMulticaster applicationEventMulticaster(BeanFactory beanFactory) {
 		SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
 		eventMulticaster.setBeanFactory(beanFactory);
-        
+
         // 设置线程池
 		eventMulticaster.setTaskExecutor(executor());
 		return eventMulticaster;
@@ -641,34 +641,34 @@ Spring 中的事件监听器就是观察者模式的一种实现，这个在文�
 ```java
 import java.util.ArrayList;
 import java.util.List;
- 
+
 public class Subject {
-   
+
    private int state;
    private List<Observer> observers = new ArrayList<Observer>();
- 
+
    public int getState() {
       return state;
    }
- 
+
    public void setState(int state) {
       this.state = state;
       notifyAllObservers();
    }
- 
+
    public void attach(Observer observer){
-      observers.add(observer);      
+      observers.add(observer);
    }
-   
+
    public void remove(Observer observer){
-      observers.remove(observer);      
+      observers.remove(observer);
    }
- 
+
    public void notifyAllObservers(){
       for (Observer observer : observers) {
          observer.update();
       }
-   }  
+   }
 }
 ```
 
@@ -689,16 +689,16 @@ public abstract class Observer {
 
    ```java
    public class BinaryObserver extends Observer{
-    
+
       public BinaryObserver(Subject subject){
          this.subject = subject;
          this.subject.attach(this);
       }
-    
+
       @Override
       public void update() {
-         System.out.println( "Binary String: " 
-         + Integer.toBinaryString( subject.getState() ) ); 
+         System.out.println( "Binary String: "
+         + Integer.toBinaryString( subject.getState() ) );
       }
    }
    ```
@@ -707,16 +707,16 @@ public abstract class Observer {
 
    ```java
    public class OctalObserver extends Observer{
-    
+
       public OctalObserver(Subject subject){
          this.subject = subject;
          this.subject.attach(this);
       }
-    
+
       @Override
       public void update() {
-        System.out.println( "Octal String: " 
-        + Integer.toOctalString( subject.getState() ) ); 
+        System.out.println( "Octal String: "
+        + Integer.toOctalString( subject.getState() ) );
       }
    }
    ```
@@ -725,16 +725,16 @@ public abstract class Observer {
 
    ```java
    public class HexaObserver extends Observer{
-    
+   
       public HexaObserver(Subject subject){
          this.subject = subject;
          this.subject.attach(this);
       }
-    
+   
       @Override
       public void update() {
-         System.out.println( "Hex String: " 
-         + Integer.toHexString( subject.getState() ).toUpperCase() ); 
+         System.out.println( "Hex String: "
+         + Integer.toHexString( subject.getState() ).toUpperCase() );
       }
    }
    ```
@@ -747,14 +747,14 @@ public abstract class Observer {
 public class ObserverPatternDemo {
    public static void main(String[] args) {
       Subject subject = new Subject();
- 
+
       new HexaObserver(subject);
       new OctalObserver(subject);
       new BinaryObserver(subject);
- 
-      System.out.println("First state change: 15");   
+
+      System.out.println("First state change: 15");
       subject.setState(15);
-      System.out.println("Second state change: 10");  
+      System.out.println("Second state change: 10");
       subject.setState(10);
    }
 }

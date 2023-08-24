@@ -9,18 +9,13 @@
 @Documented
 @Import(TransactionManagementConfigurationSelector.class)  // <===== 看下这里
 public @interface EnableTransactionManagement {
-    
     // ...
-
 }
 ```
 
-
 另外，在 SpringBoot 以及 SpringCloud 中我们都知道其原理是 **自动装配** 。而自动装配的原理的底层原理其实就是基于该注解实现的，如果你没听过这个词那你是否使用过 `@Enable` 开头的注解呢？
 
-
 比如 `@SpringBootApplication` 注解！是不是很熟悉？没错这个注解就是常常出现在启动类上的那个注解。来看下该注解源码：
-
 
 ```java
 @Target(ElementType.TYPE)
@@ -31,19 +26,15 @@ public @interface EnableTransactionManagement {
 @EnableAutoConfiguration     // <===== 看下这里
 @ComponentScan(excludeFilters = {
 		@Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
-		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) 
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class)
 })
 public @interface SpringBootApplication {
-    
     // ...
-
 }
 
 ```
 
-
 在该注解之上使用了 `@EnableAutoConfiguration` 注解，现在再来看下该注解：
-
 
 ```java
 @Target(ElementType.TYPE)
@@ -53,15 +44,11 @@ public @interface SpringBootApplication {
 @AutoConfigurationPackage
 @Import(AutoConfigurationImportSelector.class)  // <===== 看下这里
 public @interface EnableAutoConfiguration {
-    
     // ...
-
 }
 ```
 
-
 如果你不信我们在开看下 SpringCloud 的服务注册发现的注解： `@EnableDiscoveryClient` ：
-
 
 ```java
 @Target(ElementType.TYPE)
@@ -70,32 +57,31 @@ public @interface EnableAutoConfiguration {
 @Inherited
 @Import(EnableDiscoveryClientImportSelector.class)  // <===== 看下这里
 public @interface EnableDiscoveryClient {
-    
     // ...
-    
 }
 ```
 
-
 看了这么多，有没有体会到 `@Import` 注解的魅力呢？现在我们具体来看下该注解！
-
 
 在 Spring 源码中，对 `@Import` 的解释是：
 
-| **`@Import` Spring 官网释义**                                |
-| :----------------------------------------------------------- |
-| Indicates one or more _component classes_ to import; typically `@Configuration` classes.<br/><br/>Provides functionality equivalent to the `<import/>`  element in Spring XML. Allows for importing `@Configuration`  classes, `ImportSelector.class`  and `ImportBeanDefinitionRegistrar.class` implementations, as well as regular component classes. |
+Indicates one or more *component classes* to import; typically `@Configuration` classes.
 
+Provides functionality equivalent to the `<import/>`  element in Spring XML. Allows for importing `@Configuration`  classes, `ImportSelector.class`  and `ImportBeanDefinitionRegistrar.class` implementations, as well as regular component classes.
 
 总结下来就是： `@Import` 注解与基于 XML 配置的 `<import />` 具有等效作；可以用来导入普通类、基于 `@Configuration` 注解的配置类、 `org.springframework.context.annotation.ImportSelector` 的实现类和 `org.springframework.context.annotation.ImportBeanDefinitionRegistrar` 的实现类。即：
 
-- 导入普通类
-- 导入基于 `@Configuration` 注解的 JavaConfig 配置类
-- 导入 `ImportSelector` 接口的实现类
-- 导入 `ImportBeanDefinitionRegistrar` 接口的实现类
+| **@Import 应用**                                   |
+| :------------------------------------------------- |
+| 导入普通类                                         |
+| 导入基于 `@Configuration` 注解的 JavaConfig 配置类 |
+| 导入 `ImportSelector` 接口的实现类                 |
+| 导入 `ImportBeanDefinitionRegistrar` 接口的实现类  |
 
-| **说明**                                                     |
-| :----------------------------------------------------------- |
+
+
+| **说明**                                                                                                 |
+| :------------------------------------------------------------------------------------------------------- |
 | 所谓的导入其实就是将对象封装为 BeanDefinition，之后注册到 Spring 容器中交给 Spring 管理。即注册为 Bean！ |
 
 # `@Import` 的三种使用方式
@@ -270,11 +256,6 @@ User(name=null, age=null)
 ## 导入 ImportBeanDefinitionRegistrar 的实现类
 从接口 `ImportBeanDefinitionRegistrar` 的名字不知道你没有看出该接口的具体作用，顾名思义：**导入一个Bean注册器 。**
 
-在太古时代，Java 面世，举世皆惊，万朝来贺！Java 喊着万物皆对象的口号征服了亿万民众，自出世的那一刻就注定了开始发光发热，耀眼的光芒辐射宇宙。然而到了远古时代，编写企业级框的架 EJB 太过复杂和繁重导致民不聊生，一直持续到近代！
-
-
-纵观上下五千年，我们都能够得出一个道理：合久必分，分久必合，得民心者的天下。在这样天灾人祸的背景下，Spring 横空出世！自此终结了远古时代，步入近代。如果说上古时代是面向对象的天下，那么近代则是面向豆豆（ `bean` ）的天下。我们可以说，Java 之所以如此出名，Spring 功不可没！
-
 
 我们都知道 Java 是一个面向对象编程，我们所编写的源代码最终被编译成字节码动态加载到虚拟机之中。那么如果我们想要获取我们的类该怎么办？Java 又是如何描述它的？答案是理所当然的： **`java.lang.Class<T>` **。所有的类或者说对象最终在代码层面都可以使用被称之为 `Class` 的类描述它。
 
@@ -303,7 +284,7 @@ public class User implements Serializable {
     private String name;
 
     private Integer age;
-    
+
     // Setter And Getter
 }
 
@@ -391,7 +372,7 @@ public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
 // org.springframework.context.annotation.ConfigurationClassPostProcessor
 
 public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
-   
+
     List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
 
    // 获取所有的 BeanDefinition 名称
@@ -464,7 +445,7 @@ public void parse(Set<BeanDefinitionHolder> configCandidates) {
 
 ```java
 protected void processConfigurationClass(ConfigurationClass configClass) throws IOException {
-   
+
    // do something...
 
    // Recursively process the configuration class and its superclass hierarchy.
@@ -485,15 +466,15 @@ protected void processConfigurationClass(ConfigurationClass configClass) throws 
 @Nullable
 protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass)
       throws IOException {
-          
+
    // Process any @ComponentScan annotations
-   
+
    // Process any @Import annotations
    // 处理 @Import 注解
    processImports(configClass, sourceClass, getImports(sourceClass), true);
 
    // Process any @ImportResource annotations
-   
+
    // do something...
    return null;
 }
@@ -532,7 +513,7 @@ private void processImports(ConfigurationClass configClass, SourceClass currentS
                   // 调用 ImportSelector#selectImports 方法, 获取指定的类的全限定名数组
                   String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
                   Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames);
-                  
+
                   // 递归调用,再次判断解析的类内部是否还存在 @Import 注解
                   processImports(configClass, currentSourceClass, importSourceClasses, false);
                }
@@ -590,8 +571,3 @@ private void processImports(ConfigurationClass configClass, SourceClass currentS
 public class Config {
 }
 ```
-
-
-好了，有关 `@Import` 注解的介绍到此就介绍了🌹🌹🌹🌹~
-
-
