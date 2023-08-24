@@ -108,8 +108,8 @@ public class OnlineApplicationEvent extends ApplicationContextEvent {
 
 现在事件类定义好了，我们就需要定义一个该时间对应的监听器了。
 
-| **注意**                                                                                                           |
-| :----------------------------------------------------------------------------------------------------------------- |
+| **注意** |
+| :------ |
 | 事件是一个对象，每发布一个事件就需要创建一个新的事件对象，所以我们不应该将事件类注册为 Bean 交给 Spring 容器管理。 |
 
 ## 事件监听器定义
@@ -150,10 +150,10 @@ public class OnlineApplicationListener implements ApplicationListener<OnlineAppl
 
 我们定义的上线事件监听类 `OnlineApplicationListener` 实现了 `ApplicationListener` 接口类，因为我们需要监听 `OnlineApplicationEvent` 类型的事件，所以我们将泛型定义为我们需要监听的事件即可。
 
-**在重写的方法中我们打印了一句话：线程名 + 上线用户，在之后的示例中要注意下这个线程名，以便更容易理解之后的异步事件监听器的使用。**
+在重写的方法中我们打印了一句话：线程名 + 上线用户，在之后的示例中要注意下这个线程名，以便更容易理解之后的异步事件监听器的使用。
 
-| **注意**                                                                                   |
-| :----------------------------------------------------------------------------------------- |
+| **注意**  |
+| :------- |
 | 由于事件监听器监听的是一组事件，所以我们应该将事件监听器注册为 Bean 交于 Spring 容器管理。 |
 
 现在就来运行一下程序看下效果：
@@ -295,7 +295,7 @@ public static void main(String[] args) {
 }
 ```
 
-当运行这段程序时**理想情况下**是不是应该打印如下结果：
+当运行这段程序时“理想情况下”是不是应该打印如下结果：
 
 ```
 -----------------
@@ -356,10 +356,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
          }
       }
    }
-}∏
+}
 ```
 
- `initApplicationEventMulticaster()` 方法主要适用于初始化事件分发器。看下这个方法的源码：
+`initApplicationEventMulticaster()` 方法主要适用于初始化事件分发器。看下这个方法的源码：
 
 ```java
 private ApplicationEventMulticaster applicationEventMulticaster;
@@ -498,8 +498,8 @@ private ApplicationEventMulticaster applicationEventMulticaster;
 
 定义一个配置类，在内部注册 `ApplicationEventMulticaster` 类型的 Bean。
 
-| **一定要注意 Bean 的名称**                                                                                                                                                                                    |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **一定要注意 Bean 的名称**  |
+| :----------------------- |
 | 在注册事件分发器 `initApplicationEventMulticaster()` 方法中判断容器中是否有名称为 `applicationEventMulticaster` 的 Bean。所以，在自定义事件分发器时定义的 Bean 的名称一定要是 `applicationEventMulticaster`。 |
 
 好了，现在就定义一个配置类声明一个 Bean：
@@ -554,36 +554,36 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 @ComponentScan("io.gitee.ituknown")
 public class Config {
 
-	private static int AVAILABLE_PROCESSORS;
+    private static int AVAILABLE_PROCESSORS;
 
-	static {
-		AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
-	}
+    static {
+        AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
+    }
 
     @Bean
-	public Executor executor() {
-		ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-		taskExecutor.setCorePoolSize(AVAILABLE_PROCESSORS);
-		taskExecutor.setMaxPoolSize(AVAILABLE_PROCESSORS * 2);
-		taskExecutor.setQueueCapacity(999);
-		taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-		taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-		// 线程名前缀, 注意这个线程名称
-		taskExecutor.setThreadNamePrefix("async-task-thread-");
-		// 一定要初始化线程池
-		taskExecutor.initialize();
-		return taskExecutor;
-	}
+    public Executor executor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(AVAILABLE_PROCESSORS);
+        taskExecutor.setMaxPoolSize(AVAILABLE_PROCESSORS * 2);
+        taskExecutor.setQueueCapacity(999);
+        taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        // 线程名前缀, 注意这个线程名称
+        taskExecutor.setThreadNamePrefix("async-task-thread-");
+        // 一定要初始化线程池
+        taskExecutor.initialize();
+        return taskExecutor;
+    }
 
-	@Bean
-	public SimpleApplicationEventMulticaster applicationEventMulticaster(BeanFactory beanFactory) {
-		SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
-		eventMulticaster.setBeanFactory(beanFactory);
+    @Bean
+    public SimpleApplicationEventMulticaster applicationEventMulticaster(BeanFactory beanFactory) {
+        SimpleApplicationEventMulticaster eventMulticaster = new SimpleApplicationEventMulticaster();
+        eventMulticaster.setBeanFactory(beanFactory);
 
         // 设置线程池
-		eventMulticaster.setTaskExecutor(executor());
-		return eventMulticaster;
-	}
+        eventMulticaster.setTaskExecutor(executor());
+        return eventMulticaster;
+    }
 }
 ```
 
@@ -674,7 +674,7 @@ public class Subject {
 
 这个类我们就可以理解为是被观察者，这个类有持有观察者的引用（`observers`），且被观察者还能管理观察者（能够增加和删除观察者）。最后，当被观察者状态改变时能够通知所有的观察者（`notifyAllObservers`）。
 
-再来看下观察者 `Observer`
+再来看下观察者 `Observer`:
 
 ```java
 public abstract class Observer {
@@ -724,9 +724,9 @@ public abstract class Observer {
 3. 十六进制实现类
 
    ```java
-   public class HexaObserver extends Observer{
+   public class HexObserver extends Observer{
 
-      public HexaObserver(Subject subject){
+      public HexObserver(Subject subject){
          this.subject = subject;
          this.subject.attach(this);
       }
@@ -748,7 +748,7 @@ public class ObserverPatternDemo {
    public static void main(String[] args) {
       Subject subject = new Subject();
 
-      new HexaObserver(subject);
+      new HexObserver(subject);
       new OctalObserver(subject);
       new BinaryObserver(subject);
 

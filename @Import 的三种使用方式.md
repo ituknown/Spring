@@ -65,24 +65,20 @@ public @interface EnableDiscoveryClient {
 
 在 Spring 源码中，对 `@Import` 的解释是：
 
-Indicates one or more *component classes* to import; typically `@Configuration` classes.
+> Indicates one or more *component classes* to import; typically `@Configuration` classes.
+>
+> Provides functionality equivalent to the `<import/>`  element in Spring XML. Allows for importing `@Configuration`  classes, `ImportSelector.class`  and `ImportBeanDefinitionRegistrar.class` implementations, as well as regular component classes.
 
-Provides functionality equivalent to the `<import/>`  element in Spring XML. Allows for importing `@Configuration`  classes, `ImportSelector.class`  and `ImportBeanDefinitionRegistrar.class` implementations, as well as regular component classes.
 
-总结下来就是： `@Import` 注解与基于 XML 配置的 `<import />` 具有等效作；可以用来导入普通类、基于 `@Configuration` 注解的配置类、 `org.springframework.context.annotation.ImportSelector` 的实现类和 `org.springframework.context.annotation.ImportBeanDefinitionRegistrar` 的实现类。即：
-
-| **@Import 应用**                                   |
+| **总结下来就是，`@Import` 可用于：**                                   |
 | :------------------------------------------------- |
 | 导入普通类                                         |
 | 导入基于 `@Configuration` 注解的 JavaConfig 配置类 |
-| 导入 `ImportSelector` 接口的实现类                 |
-| 导入 `ImportBeanDefinitionRegistrar` 接口的实现类  |
+| 导入 `org.springframework.context.annotation.ImportSelector.ImportSelector` 接口的实现类                 |
+| 导入 `org.springframework.context.annotation.ImportBeanDefinitionRegistrar` 接口的实现类  |
 
 
-
-| **说明**                                                                                                 |
-| :------------------------------------------------------------------------------------------------------- |
-| 所谓的导入其实就是将对象封装为 BeanDefinition，之后注册到 Spring 容器中交给 Spring 管理。即注册为 Bean！ |
+**说明：** 所谓的导入其实就是将对象封装为 BeanDefinition，之后注册到 Spring 容器中交给 Spring 管理。即注册为 Bean！
 
 # `@Import` 的三种使用方式
 
