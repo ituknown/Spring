@@ -122,11 +122,11 @@ public class MonitorConfigurationProperties {
 }
 ```
 
-<img width="600px" src="http://spring-media.knowledge.ituknown.cn/ConfigurationProperties/configuration-properties-validated.png" alt="configuration-properties-validated.png">
+<img width="" src="http://spring-media.knowledge.ituknown.cn/ConfigurationProperties/configuration-properties-validated.png" alt="configuration-properties-validated.png">
 
-<img width="600px" src="http://spring-media.knowledge.ituknown.cn/ConfigurationProperties/configuration-properties-metadata-json.png" alt="configuration-properties-metadata-json.pngg">
+<img width="" src="http://spring-media.knowledge.ituknown.cn/ConfigurationProperties/configuration-properties-metadata-json.png" alt="configuration-properties-metadata-json.pngg">
 
-<img width="600px" src="http://spring-media.knowledge.ituknown.cn/ConfigurationProperties/configuration-properties-tips.png" alt="configuration-properties-tips.png">
+<img width="" src="http://spring-media.knowledge.ituknown.cn/ConfigurationProperties/configuration-properties-tips.png" alt="configuration-properties-tips.png">
 
 --
 
