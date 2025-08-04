@@ -1,0 +1,22 @@
+{
+  "livePreview": true,
+  "readableLineLength": true,
+  "strictLineBreaks": true,
+  "propertiesInDocument": "visible",
+  "spellcheck": true,
+  "autoPairBrackets": false,
+  "useTab": false,
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "current",
+  "pdfExportSettings": {
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  },
+  "foldIndent": false,
+  "showIndentGuide": false,
+  "newLinkFormat": "relative",
+  "attachmentFolderPath": "./",
+  "defaultViewMode": "source"
+}
