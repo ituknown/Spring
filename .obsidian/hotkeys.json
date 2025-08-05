@@ -15,6 +15,7 @@
       "key": "E"
     }
   ],
+  "workspace:edit-file-title": [],
   "app:open-vault": [
     {
       "modifiers": [
@@ -22,5 +23,20 @@
       ],
       "key": "."
     }
-  ]
+  ],
+  "app:go-back": [],
+  "workspace:close-window": [],
+  "app:go-forward": [],
+  "editor:toggle-checklist-status": [],
+  "workspace:previous-tab": [],
+  "workspace:next-tab": [],
+  "workspace:goto-tab-1": [],
+  "workspace:goto-tab-2": [],
+  "workspace:goto-tab-3": [],
+  "workspace:goto-tab-4": [],
+  "workspace:goto-tab-5": [],
+  "workspace:goto-tab-6": [],
+  "workspace:goto-tab-7": [],
+  "workspace:goto-tab-8": [],
+  "workspace:goto-last-tab": []
 }
