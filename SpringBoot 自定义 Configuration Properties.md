@@ -2,7 +2,7 @@
 
 该注解是 Spring Boot 自动配置中的重要一环，比如对于一个基于 Tomcat 的 Spring Boot 项目即使我们不做任何配置也能正常启动，原始是因为 Tomcat 默认端口号是 8080。但是当我们配置 `server.port=9090` 之后就会发现 Tomcat 端口号就成了 9090 了。
 
-其根本原因就是 Spring Boot 对 Web 服务的配置使用的是 org.springframework.boot.autoconfigure.web.ServerProperties 对象，该类上就使用了 @ConfigurationProperties 注解。当然了，仅使用该注解还无法做到将配置加载到对象中。
+其根本原因就是 Spring Boot 对 Web 服务的配置使用的是 org.springframework.boot.autoconfigure.web. ServerProperties 对象，该类上就使用了 @ConfigurationProperties 注解。当然了，仅使用该注解还无法做到将配置加载到对象中。
 
 @ConfigurationProperties 加载配置的原理是通过 BeanPostProcessor 实现的，其对应的 Bean 后置处理器为 ConfigurationPropertiesBindingPostProcessor。也就是说在bean被实例化后，会调用后置处理器，递归的查找属性，通过反射机制注入值，因此属性需要提供setter和getter方法。
 
@@ -34,13 +34,12 @@ public class MyPersonProperties {
 | :-------------------------------- | :----------------------------------------------------------- |
 | my.main-project.person.first-name | Kebab case，.properties 和 .yml 配置文件最常用的方式         |
 | my.main-project.person.firstName  | 标准驼峰方式                                                 |
-| my.main-project.person.first_name | 下划线表示法，在`.properties` 和 `.yml`文件中使用的另一种格式 |
+| my.main-project.person.first_name | 下划线表示法，在 `.properties` 和 `.yml` 文件中使用的另一种格式 |
 | MY_MAINPROJECT_PERSON_FIRSTNAME   | 大写格式，在使用系统环境变量时推荐使用                       |
 
 注意：@ConfigurationProperties注解中 prefix 的值必须是 kebab-case 风格（例如my.main-project.person）。具体可以查看一下 [Spring Boot 官方文档 Relaxed Binding（以 Spring Boot 2.7.15 为例）](https://docs.spring.io/spring-boot/docs/2.7.15/reference/html/features.html#features.external-config.typesafe-configuration-properties.relaxed-binding)。
 
 另外，如果想在 JavaBean 上使用 @ConfigurationProperties 注解，Spring Boot 文档特别强调的几点：
-
 
 |**NOTE：**|
 |:-----------------------------------|
@@ -164,17 +163,17 @@ public class MonitorConfigurationProperties {
 
 现在，appId 属性是必填项，当我们不去配置时就会启动失败：
 
-<img width="" src="https://ituknown.org/spring-media/ConfigurationProperties/configuration-properties-validated.png" alt="configuration-properties-validated.png">
+<img width="" src="https://media.ituknown.org/spring-media/ConfigurationProperties/configuration-properties-validated.png" alt="configuration-properties-validated.png">
 
 另外，有些博客会告诉你当编写一个配置类时记得同时在 MATE-INF 目录下创建一个 spring-configuration-metadata.json 文件，并在该文件中以 JSON 的格式编写属性配置信息（如属性类型、释义以及默认值），这样当你编辑配置时就会有属性提示。
 
 实际上并不需要，因为这些事情 Spring Boot 会自动当你完成，当你编译或构建项目时会自动在 classes 文件下生成该文件。示例如下：
 
-<img width="" src="https://ituknown.org/spring-media/ConfigurationProperties/configuration-properties-metadata-json.png" alt="configuration-properties-metadata-json.png">
+<img width="" src="https://media.ituknown.org/spring-media/ConfigurationProperties/configuration-properties-metadata-json.png" alt="configuration-properties-metadata-json.png">
 
 之后编写配置时对应的属性提示就出来了：
 
-<img width="" src="https://ituknown.org/spring-media/ConfigurationProperties/configuration-properties-tips.png" alt="configuration-properties-tips.png">
+<img width="" src="https://media.ituknown.org/spring-media/ConfigurationProperties/configuration-properties-tips.png" alt="configuration-properties-tips.png">
 
 --
 

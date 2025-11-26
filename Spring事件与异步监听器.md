@@ -19,7 +19,7 @@ public interface Event {
 
 ## 事件定义
 
-Spring 的事件定义都源于JDK 依赖库中内置的一个事件类：`java.util.EventObject`：
+Spring 的事件定义都源于JDK 依赖库中内置的一个事件类： `java.util.EventObject` ：
 
 ```java
 public class EventObject implements java.io.Serializable {
@@ -43,11 +43,11 @@ public class EventObject implements java.io.Serializable {
 }
 ```
 
-在 JDK 的事件对象类中定义了一个构造方法，且参数是一个 Object 类型的事件源（`source`）。对于这个源应该很好理解，简单的说就是从哪里来，简单粗暴。
+在 JDK 的事件对象类中定义了一个构造方法，且参数是一个 Object 类型的事件源（ `source` ）。对于这个源应该很好理解，简单的说就是从哪里来，简单粗暴。
 
 而在 Spring 框架中官方人员对该类做了进一步扩展，看下类的继承关系图：
 
-![EventObject.png](https://ituknown.org/spring-media/EventListener/EventObject.png)
+![EventObject.png](https://media.ituknown.org/spring-media/EventListener/EventObject.png)
 
 `ApplicationEvent` 抽象类是 Spring 对 `java.util.EventObject` 做的初步扩展，该类没有其他实际意义，仅仅只是在其基础上增加了事件创建时间属性：
 
@@ -67,7 +67,7 @@ public abstract class ApplicationEvent extends EventObject {
 }
 ```
 
-而且，对于构造方法中的事件源参数 `source` 似乎也不太好理解（如果不知道 `java.util.EventObject`  的话）。所以，在实际使用中我们还是以 `ApplicationContextEvent` 抽行类为主：
+而且，对于构造方法中的事件源参数 `source` 似乎也不太好理解（如果不知道 `java.util.EventObject` 的话）。所以，在实际使用中我们还是以 `ApplicationContextEvent` 抽行类为主：
 
 ```java
 public abstract class ApplicationContextEvent extends ApplicationEvent {
@@ -82,11 +82,11 @@ public abstract class ApplicationContextEvent extends ApplicationEvent {
 }
 ```
 
-这个抽象类与 `ApplicationEvent` 在功能上没有任何区别。要说区别的话可能就是在构造方法中限定了事件源 `source` 对象类型为 `ApplicationContext`。作为 Spring 框架的搬运工大家对这个接口并不陌生，因为它是 Spring 工厂的高级容器接口。使用该类就可以显示的告诉所有程序对象事件源来自于 Spring 容器，全权由 Spring 管理。所以，在实际使用中还是应该以 `ApplicationContextEvent` 类为主。
+这个抽象类与 `ApplicationEvent` 在功能上没有任何区别。要说区别的话可能就是在构造方法中限定了事件源 `source` 对象类型为 `ApplicationContext` 。作为 Spring 框架的搬运工大家对这个接口并不陌生，因为它是 Spring 工厂的高级容器接口。使用该类就可以显示的告诉所有程序对象事件源来自于 Spring 容器，全权由 Spring 管理。所以，在实际使用中还是应该以 `ApplicationContextEvent` 类为主。
 
 现在就基于该类定义一个事件，在直播网站中如果某个用户进入直播间通常都会有一个标语：欢迎xx进入直播间，一起走波小礼物~
 
-那我们就定义一个上线的事件类：`OnlineApplicationEvent`：
+那我们就定义一个上线的事件类： `OnlineApplicationEvent` ：
 
 ```java
 public class OnlineApplicationEvent extends ApplicationContextEvent {
@@ -104,7 +104,7 @@ public class OnlineApplicationEvent extends ApplicationContextEvent {
 }
 ```
 
-这里只是演示使用，所以只是简单的再构造方法中将用户的名称传递过来，并赋给属性 `nickname`。
+这里只是演示使用，所以只是简单的再构造方法中将用户的名称传递过来，并赋给属性 `nickname` 。
 
 现在事件类定义好了，我们就需要定义一个该时间对应的监听器了。
 
@@ -114,14 +114,14 @@ public class OnlineApplicationEvent extends ApplicationContextEvent {
 
 ## 事件监听器定义
 
-既然 JDK 定义了事件对象肯定就有相应的监听器类，这个监听器是一个接口类：`java.util.EventListener`，其内部没有定义任何方法，是个空壳接口类。所有的一切都有程序员自行扩展：
+既然 JDK 定义了事件对象肯定就有相应的监听器类，这个监听器是一个接口类： `java.util.EventListener` ，其内部没有定义任何方法，是个空壳接口类。所有的一切都有程序员自行扩展：
 
 ```java
 public interface EventListener {
 }
 ```
 
-而 Spring 的事件监听器也继承自该类，Spring 内部定义的基础事件监听器类是 `ApplicationListener`：
+而 Spring 的事件监听器也继承自该类，Spring 内部定义的基础事件监听器类是 `ApplicationListener` ：
 
 ```java
 @FunctionalInterface
@@ -131,9 +131,9 @@ public interface ApplicationListener<E extends ApplicationEvent> extends EventLi
 }
 ```
 
-看到这个类我们唯一需要注意的是该类指定的泛型：`E extends ApplicationEvent` 。也就是说，该监听器只监听 `org.springframework.context.ApplicationEvent` 类型的事件。现在再回头看下我们在之前定义事件的过程，是不是推荐使用 `ApplicationContextEvent` 事件类？而该类又继承自 `ApplicationEvent`。
+看到这个类我们唯一需要注意的是该类指定的泛型： `E extends ApplicationEvent` 。也就是说，该监听器只监听 `org.springframework.context.ApplicationEvent` 类型的事件。现在再回头看下我们在之前定义事件的过程，是不是推荐使用 `ApplicationContextEvent` 事件类？而该类又继承自 `ApplicationEvent` 。
 
-另一点需要注意的是内部定义的抽象方法 `onApplicationEvent(E event)`。这个参数就是我们在发布事件时的事件对象，比如我们要发布用户上线事件，那该参数类型是不是就是 `OnlineApplicationEvent` 了？
+另一点需要注意的是内部定义的抽象方法 `onApplicationEvent(E event)` 。这个参数就是我们在发布事件时的事件对象，比如我们要发布用户上线事件，那该参数类型是不是就是 `OnlineApplicationEvent` 了？
 
 现在就来定义一个监听器类 `OnlineApplicationListener` :
 
@@ -208,7 +208,6 @@ public interface SmartApplicationListener extends ApplicationListener<Applicatio
 @Component
 public class SmartOnlineApplicationListener implements SmartApplicationListener {
 
-
 	@Override
 	public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
 		return eventType.isAssignableFrom(OnlineApplicationEvent.class);
@@ -224,7 +223,7 @@ public class SmartOnlineApplicationListener implements SmartApplicationListener 
 
 似乎也没有什么区别，唯一的区别就是多了 `supportsEventType` 方法。该方法与泛型是等效效果，当该方法的返回值为 true 时才会继续执行 `onApplicationEvent` 监听器方法。所以在实际使用中根据个人喜好选择即可~
 
-还有一种更简单的基于注解的事件监听器，该注解就是 `@EventListener`：
+还有一种更简单的基于注解的事件监听器，该注解就是 `@EventListener` ：
 
 ```java
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
@@ -420,7 +419,7 @@ ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalState
 }
 ```
 
-具体逻辑先不管，但是我们很明显能看出一点的就是注册监听器与  `initApplicationEventMulticaster()` 方法中注册的事件分发器有关，因为在 `getApplicationEventMulticaster()` 方法中获取的事件分发器就是在上一步中注册的事件分发器。
+具体逻辑先不管，但是我们很明显能看出一点的就是注册监听器与 `initApplicationEventMulticaster()` 方法中注册的事件分发器有关，因为在 `getApplicationEventMulticaster()` 方法中获取的事件分发器就是在上一步中注册的事件分发器。
 
 而之后的 `finishRefresh()` 方法主要执行的业务就是发布事件，也就是与该类中的 `getApplicationEventMulticaster().multicastEvent(earlyEvent)` 逻辑相同。
 
@@ -469,7 +468,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 
 上面是 `SimpleApplicationEventMulticaster` 简化后的源码，我们注意看下 `multicastEvent` 方法。来一起读一下该方法中的内容：
 
-第一步调用 `resolveDefaultEventType` 方法进行解析事件的类型得到  `ResolvableType` 对象（这个不需要关心）。
+第一步调用 `resolveDefaultEventType` 方法进行解析事件的类型得到 `ResolvableType` 对象（这个不需要关心）。
 
 第二步重点来了，执行 `getTaskExecutor()` 方法获取线程池。想一下，我们没有自定义过事件分发器。而这个事件分发器是 Spring 默认初始化的，在上面的源码中默认注册的事件管理器是直接调用构造方法初始化之后就直接赋值应用了：
 
@@ -494,13 +493,13 @@ beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.appl
 private ApplicationEventMulticaster applicationEventMulticaster;
 ```
 
-`ApplicationEventMulticaster` 类是一个接口类 `org.springframework.context.event.ApplicationEventMulticaster`。而我们需要定义一个该类型的事件分发器，之后你会发现 Spring 中对于该接口只定义了一个实现类 `SimpleApplicationEventMulticaster` 。这样，我们直接使用该类即可（当然你也可以自行扩展）。
+`ApplicationEventMulticaster` 类是一个接口类 `org.springframework.context.event.ApplicationEventMulticaster` 。而我们需要定义一个该类型的事件分发器，之后你会发现 Spring 中对于该接口只定义了一个实现类 `SimpleApplicationEventMulticaster` 。这样，我们直接使用该类即可（当然你也可以自行扩展）。
 
 定义一个配置类，在内部注册 `ApplicationEventMulticaster` 类型的 Bean。
 
 | **一定要注意 Bean 的名称**  |
 | :----------------------- |
-| 在注册事件分发器 `initApplicationEventMulticaster()` 方法中判断容器中是否有名称为 `applicationEventMulticaster` 的 Bean。所以，在自定义事件分发器时定义的 Bean 的名称一定要是 `applicationEventMulticaster`。 |
+| 在注册事件分发器 `initApplicationEventMulticaster()` 方法中判断容器中是否有名称为 `applicationEventMulticaster` 的 Bean。所以，在自定义事件分发器时定义的 Bean 的名称一定要是 `applicationEventMulticaster` 。 |
 
 好了，现在就定义一个配置类声明一个 Bean：
 
@@ -672,9 +671,9 @@ public class Subject {
 }
 ```
 
-这个类我们就可以理解为是被观察者，这个类有持有观察者的引用（`observers`），且被观察者还能管理观察者（能够增加和删除观察者）。最后，当被观察者状态改变时能够通知所有的观察者（`notifyAllObservers`）。
+这个类我们就可以理解为是被观察者，这个类有持有观察者的引用（ `observers` ），且被观察者还能管理观察者（能够增加和删除观察者）。最后，当被观察者状态改变时能够通知所有的观察者（ `notifyAllObservers` ）。
 
-再来看下观察者 `Observer`:
+再来看下观察者 `Observer` :
 
 ```java
 public abstract class Observer {
@@ -687,7 +686,9 @@ public abstract class Observer {
 
 1. 二进制实现类
 
-   ```java
+   
+
+```java
    public class BinaryObserver extends Observer{
 
       public BinaryObserver(Subject subject){
@@ -705,7 +706,9 @@ public abstract class Observer {
 
 2. 十进制实现类
 
-   ```java
+   
+
+```java
    public class OctalObserver extends Observer{
 
       public OctalObserver(Subject subject){
@@ -723,7 +726,9 @@ public abstract class Observer {
 
 3. 十六进制实现类
 
-   ```java
+   
+
+```java
    public class HexObserver extends Observer{
 
       public HexObserver(Subject subject){
